@@ -384,6 +384,14 @@ extension StatusItemController {
         let style = merged ? self.store.iconStyle : self.store.style(for: provider)
         let warningFlash = self.quotaWarningFlashActive(provider: provider)
 
+        if !merged, showBrandPercent,
+           let wasCached = self.applyAccountWeeklyMenuBarLayout(
+               provider: provider, statusItem: statusItem, warningFlash: warningFlash)
+        {
+            self.noteIconPerfRender(skipped: wasCached)
+            return wasCached
+        }
+
         if showBrandPercent,
            let wasCached = self.applyStoredMenuBarLayoutIfNeeded(
                provider: provider,

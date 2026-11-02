@@ -2761,3 +2761,5 @@
 "Leave blank to use the default name." = "기본 이름을 사용하려면 비워 두세요.";
 "Rewards" = "보상";
 "Reward expiry" = "보상 만료일";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";

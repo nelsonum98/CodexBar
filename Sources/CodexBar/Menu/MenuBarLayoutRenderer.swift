@@ -69,7 +69,7 @@ struct MenuBarLayoutRenderData: Hashable {
     let tertiary: MenuBarLayoutRenderWindow?
     var extraRateWindows: [MenuBarLayoutRenderExtra] = []
     let session: MenuBarLayoutRenderWindow?
-    let weekly: MenuBarLayoutRenderWindow?
+    var weekly: MenuBarLayoutRenderWindow?
     let scopedWeekly: MenuBarLayoutRenderWindow?
     /// Title of the active scoped weekly window (e.g. "Fable only"), used to label the
     /// `.scopedWeekly` token with the real model rather than assuming Fable.
@@ -147,13 +147,13 @@ struct MenuBarLayoutRenderOptions: Hashable {
     let colorPace: Bool
     let colorByProvider: Bool
     let highContrast: Bool
-    let showUsed: Bool
+    var showUsed: Bool
     let conditionals: [MenuBarLayoutConditional]
     let appearanceName: String
     let isDebugApp: Bool
     /// Whether the provider's latest refresh failed; when true the shown snapshot is stale
     /// and rendered dimmer until a background refresh succeeds again.
-    let isStale: Bool
+    var isStale: Bool
     /// Whether the status item is currently highlighted (e.g. tracking an open menu).
     let isHighlighted: Bool
     /// Exact display clock. The cache keys on the resulting reset strings, so animation ticks that keep

@@ -2795,3 +2795,5 @@
 "Leave blank to use the default name." = "เว้นว่างไว้เพื่อใช้ชื่อเริ่มต้น";
 "Rewards" = "รางวัล";
 "Reward expiry" = "วันหมดอายุของรางวัล";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";

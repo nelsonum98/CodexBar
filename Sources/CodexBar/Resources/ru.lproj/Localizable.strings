@@ -2794,3 +2794,5 @@
 "Leave blank to use the default name." = "Оставьте поле пустым, чтобы использовать имя по умолчанию.";
 "Rewards" = "Награды";
 "Reward expiry" = "Срок действия наград";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";

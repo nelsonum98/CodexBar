@@ -2792,3 +2792,5 @@
 "Leave blank to use the default name." = "Deixa este campo baleiro para usar o nome predeterminado.";
 "Rewards" = "Recompensas";
 "Reward expiry" = "Caducidade das recompensas";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";
