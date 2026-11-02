@@ -46,12 +46,16 @@ extension MenuBarLayoutRenderer {
                 }
             }
         }
-        return Self.composeStackedProviderRows(
+        let composed = Self.composeStackedProviderRows(
             top: MenuBarLayoutRenderedTitle(
                 attributedTitle: titles[0], accessibilityLabel: accessibilityLabels[0], leadingIcon: nil),
             bottom: MenuBarLayoutRenderedTitle(
                 attributedTitle: titles[1], accessibilityLabel: accessibilityLabels[1], leadingIcon: nil),
             topProviderName: rows[0].label,
             bottomProviderName: rows[1].label)
+        return MenuBarLayoutRenderedTitle(
+            attributedTitle: composed.attributedTitle,
+            accessibilityLabel: composed.accessibilityLabel,
+            leadingIcon: nil)
     }
 }
