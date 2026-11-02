@@ -26,21 +26,12 @@ extension StatusItemController {
         options.isStale = false
         let icon = ProviderBrandIcon.image(for: provider)
             .map { warningFlash ? Self.quotaWarningFlashImage(base: $0) : $0 }
-        let renderedRows = rows.map { row in
-            let data = row.renderData(
-                provider: provider,
-                iconKey: "\(provider.rawValue):\(warningFlash ? "warning" : "normal")")
-            return self.menuBarLayoutRenderer.render(
-                layout: MenuBarLayout(lines: [[.icon, .accountLabel, .percent(window: .weekly)]]),
-                data: data,
-                icon: icon,
-                options: options)
-        }
-        let rendered = MenuBarLayoutRenderer.composeStackedProviderRows(
-            top: renderedRows[0],
-            bottom: renderedRows[1],
-            topProviderName: rows[0].label,
-            bottomProviderName: rows[1].label)
+        let rendered = self.menuBarLayoutRenderer.renderAccountWeeklyRows(
+            rows,
+            provider: provider,
+            iconKey: "\(provider.rawValue):\(warningFlash ? "warning" : "normal")",
+            icon: icon,
+            options: options)
         let wasCached = button.image === rendered.statusImage
         self.lastAppliedProviderIconRenderSignatures[provider.instanceID] = nil
         statusItem.length = Self.applyMenuBarLayoutContent(rendered, for: button, gap: self.settings.menuBarLayoutGap)

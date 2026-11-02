@@ -1,10 +1,69 @@
+import AppKit
 import CodexBarCore
+import CoreText
 import Foundation
 import Testing
 @testable import CodexBar
 
 @MainActor
 struct MenuBarAccountWeeklyRowTests {
+    @Test(arguments: [0.0, 9.0, 100.0, nil] as [Double?])
+    func `account columns align values without a visible window marker`(remaining: Double?) {
+        let rows = [
+            MenuBarAccountWeeklyRow(
+                label: "PER",
+                provider: .claude,
+                snapshot: UsageSnapshot(
+                    primary: nil,
+                    secondary: self.window(used: 58, minutes: 10080),
+                    updatedAt: Date())),
+            MenuBarAccountWeeklyRow(
+                label: "FC",
+                provider: .claude,
+                snapshot: remaining.map {
+                    UsageSnapshot(
+                        primary: nil,
+                        secondary: self.window(used: 100 - $0, minutes: 10080),
+                        updatedAt: Date())
+                }),
+        ]
+        let output = MenuBarLayoutRenderer().renderAccountWeeklyRows(
+            rows,
+            provider: .claude,
+            iconKey: "example",
+            icon: nil,
+            options: MenuBarLayoutRenderOptions(
+                size: .regular,
+                highContrast: false,
+                showUsed: false,
+                conditionals: [],
+                appearanceName: "NSAppearanceNameAqua",
+                isDebugApp: false,
+                now: Date(),
+                forceStackedStyle: true))
+        let title = output.attributedTitle
+        let lines = title.string.components(separatedBy: "\n")
+        let top = title.attributedSubstring(from: NSRange(location: 0, length: (lines[0] as NSString).length))
+        let bottom = title.attributedSubstring(from: NSRange(
+            location: top.length + 1, length: (lines[1] as NSString).length))
+        let topWidth = CTLineGetTypographicBounds(CTLineCreateWithAttributedString(top), nil, nil, nil)
+        let bottomWidth = CTLineGetTypographicBounds(CTLineCreateWithAttributedString(bottom), nil, nil, nil)
+        #expect(abs(topWidth - bottomWidth) < 0.01)
+        #expect(!title.string.contains("W"))
+        #expect(output.accessibilityLabel.contains("Weekly"))
+        #expect(output.accessibilityLabel.contains("42%"))
+        if remaining != nil {
+            let topPercent = (top.string as NSString).range(of: "%").location
+            let bottomPercent = (bottom.string as NSString).range(of: "%").location
+            let topOffset = CTLineGetOffsetForStringIndex(CTLineCreateWithAttributedString(top), topPercent, nil)
+            let bottomOffset = CTLineGetOffsetForStringIndex(
+                CTLineCreateWithAttributedString(bottom),
+                bottomPercent,
+                nil)
+            #expect(abs(topOffset - bottomOffset) < 0.01)
+        }
+    }
+
     @Test
     func `weekly account rows render their account labels and percentages`() {
         let row = MenuBarAccountWeeklyRow(

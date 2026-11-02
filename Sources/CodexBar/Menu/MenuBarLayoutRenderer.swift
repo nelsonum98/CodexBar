@@ -142,8 +142,8 @@ struct MenuBarLayoutRenderExtra: Hashable {
 
 struct MenuBarLayoutRenderOptions: Hashable {
     let size: MenuBarLayoutSize
-    let monospacedDigits: Bool
-    let showWindowLabels: Bool
+    var monospacedDigits: Bool
+    var showWindowLabels: Bool
     let colorPace: Bool
     let colorByProvider: Bool
     let highContrast: Bool
