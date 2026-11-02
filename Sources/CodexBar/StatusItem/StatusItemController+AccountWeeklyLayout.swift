@@ -7,20 +7,8 @@ extension StatusItemController {
               !self.shouldMergeIcons,
               !self.menuBarUsageSource(for: provider).isFleet
         else { return [] }
-        switch provider {
-        case .claude:
-            return MenuBarAccountWeeklyRow.claude(
-                accounts: self.store.claudeSwapAccountSnapshots,
-                adapterError: self.store.claudeSwapLastError,
-                hidePersonalInfo: self.settings.hidePersonalInfo)
-        case .codex:
-            return MenuBarAccountWeeklyRow.codex(
-                accounts: self.settings.codexVisibleAccountProjectionForMenuDisplay?.visibleAccounts ?? [],
-                snapshots: self.store.codexAccountSnapshots,
-                hidePersonalInfo: self.settings.hidePersonalInfo)
-        default:
-            return []
-        }
+        return ProviderCatalog.implementation(for: provider)?.menuBarAccountWeeklyRows(
+            store: self.store, settings: self.settings) ?? []
     }
 
     func applyAccountWeeklyMenuBarLayout(
