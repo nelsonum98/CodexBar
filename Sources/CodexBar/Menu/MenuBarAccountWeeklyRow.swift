@@ -12,6 +12,17 @@ struct MenuBarAccountWeeklyRow: Hashable {
             MenuBarLayoutSemanticWindowResolver.windows(provider: provider, snapshot: snapshot).weekly)
     }
 
+    func paceDelta(now: Date) -> Double? {
+        guard let weekly else { return nil }
+        return UsagePace.weekly(
+            window: RateWindow(
+                usedPercent: weekly.usedPercent,
+                windowMinutes: weekly.windowMinutes,
+                resetsAt: weekly.resetsAt,
+                resetDescription: weekly.resetDescription),
+            now: now)?.deltaPercent
+    }
+
     func renderData(provider: UsageProvider, iconKey: String) -> MenuBarLayoutRenderData {
         MenuBarLayoutRenderData(
             provider: provider.instanceID,

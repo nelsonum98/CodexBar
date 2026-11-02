@@ -7,6 +7,59 @@ import Testing
 
 @MainActor
 struct MenuBarAccountWeeklyRowTests {
+    @Test(arguments: [-5.1, -5.0, 0.0, 5.0, 5.1])
+    func `weekly percentages color only outside the five point pace band`(delta: Double) throws {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let rows = [
+            self.pacedRow(label: "AAA", used: 50 + delta, reset: now.addingTimeInterval(302_400)),
+            self.pacedRow(label: "BB", used: 50, reset: now.addingTimeInterval(302_400)),
+        ]
+        let output = MenuBarLayoutRenderer().renderAccountWeeklyRows(
+            rows,
+            provider: .claude,
+            iconKey: "example",
+            icon: nil,
+            options: MenuBarLayoutRenderOptions(
+                size: .regular,
+                highContrast: false,
+                showUsed: false,
+                conditionals: [],
+                appearanceName: "NSAppearanceNameAqua",
+                isDebugApp: false,
+                now: now,
+                forceStackedStyle: true))
+        let title = output.attributedTitle
+        let labelIndex = (title.string as NSString).range(of: "AAA").location
+        let percentIndex = (title.string as NSString).range(of: "%").location
+        let color = try #require(title.attribute(.foregroundColor, at: percentIndex, effectiveRange: nil) as? NSColor)
+        let labelColor = try #require(title.attribute(
+            .foregroundColor,
+            at: labelIndex,
+            effectiveRange: nil) as? NSColor)
+        let expected: NSColor = delta > 5 ? .systemRed : (delta < -5 ? .systemGreen : labelColor)
+        #expect(color == expected)
+        #expect(labelColor != .systemRed && labelColor != .systemGreen)
+        if abs(delta) <= 5 {
+            #expect(output.accessibilityLabel.contains("On pace"))
+        } else {
+            #expect(output.statusImage == nil)
+            #expect(output.accessibilityLabel.contains(delta > 0 ? "deficit" : "reserve"))
+        }
+    }
+
+    @Test
+    func `pace uses each accounts reset and becomes unknown after reset`() {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let first = self.pacedRow(label: "AAA", used: 50, reset: now.addingTimeInterval(302_400))
+        let second = self.pacedRow(label: "BB", used: 50, reset: now.addingTimeInterval(151_200))
+        #expect(first.paceDelta(now: now) == 0)
+        #expect(second.paceDelta(now: now) == -25)
+        #expect(first.paceDelta(now: now.addingTimeInterval(6048)) == -1)
+        #expect(second.paceDelta(now: now.addingTimeInterval(151_200)) == nil)
+        #expect(self.pacedRow(label: "AAA", used: 50, reset: nil).paceDelta(now: now) == nil)
+        #expect(MenuBarAccountWeeklyRow(label: "AAA", provider: .claude, snapshot: nil).paceDelta(now: now) == nil)
+    }
+
     @Test(arguments: [0.0, 9.0, 100.0, nil] as [Double?])
     func `account columns align values without a visible window marker`(remaining: Double?) {
         let rows = [
@@ -201,6 +254,17 @@ struct MenuBarAccountWeeklyRowTests {
             snapshots: [record],
             hidePersonalInfo: false)
         #expect(rows[0].weekly == nil)
+    }
+
+    private func pacedRow(label: String, used: Double, reset: Date?) -> MenuBarAccountWeeklyRow {
+        MenuBarAccountWeeklyRow(
+            label: label,
+            provider: .claude,
+            snapshot: UsageSnapshot(
+                primary: nil,
+                secondary: RateWindow(
+                    usedPercent: used, windowMinutes: 10080, resetsAt: reset, resetDescription: nil),
+                updatedAt: Date()))
     }
 
     private func codexAccount(id: String, workspace: String) -> CodexVisibleAccount {

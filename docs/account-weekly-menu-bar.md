@@ -12,6 +12,8 @@ This display uses the same cached accounts as the menus. Rename Codex accounts i
 
 Rows omit the weekly window marker. Labels reserve at least three digits' width, and percentages align at the right edge in a column wide enough for 100%.
 
+Each percentage compares allowance remaining with the fraction of that account's week remaining until reset. More than five percentage points in surplus is green. More than five points in deficit is red. The inclusive ±5-point band stays neutral. Missing or expired reset dates stay neutral. This uses a steady pace across all seven days, independently for each account, and updates each minute as time passes. Labels and provider icons retain their normal color.
+
 An unavailable account keeps its label and displays a dash. Claude feed failures and last-known measurements do not appear as current allowance. Updating either account redraws its provider's display. Session limits are not included.
 
 The setting is off by default. It applies when the provider has exactly two accounts. Other providers and other account counts retain their saved layouts. Turn it off to restore each provider's saved layout.

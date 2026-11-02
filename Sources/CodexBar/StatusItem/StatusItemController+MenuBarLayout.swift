@@ -331,7 +331,8 @@ extension StatusItemController {
     }
 
     @objc func refreshStatusItemContentForColorMode() {
-        guard self.settings.menuBarColorByProvider, !self.hasPreparedForAppShutdown else { return }
+        guard self.settings.menuBarColorByProvider || self.settings.menuBarAccountWeeklyUsageEnabled,
+              !self.hasPreparedForAppShutdown else { return }
 
         if self.shouldMergeIcons {
             _ = self.applyIcon(phase: nil, bypassMergedMenuTrackingDeferral: true)
