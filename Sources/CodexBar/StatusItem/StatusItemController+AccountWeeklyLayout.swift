@@ -27,15 +27,9 @@ extension StatusItemController {
         let icon = ProviderBrandIcon.image(for: provider)
             .map { warningFlash ? Self.quotaWarningFlashImage(base: $0) : $0 }
         let renderedRows = rows.map { row in
-            var data = self.store.menuBarLayoutRenderData(
+            let data = row.renderData(
                 provider: provider,
-                snapshot: nil,
-                iconKey: "\(provider.rawValue):\(warningFlash ? "warning" : "normal")",
-                accountLabel: row.label,
-                costs: MenuBarLayoutCostValues(today: nil, last30Days: nil, todayUSD: nil, last30DaysUSD: nil),
-                includeLocalDerivedData: false,
-                now: now)
-            data.weekly = row.weekly
+                iconKey: "\(provider.rawValue):\(warningFlash ? "warning" : "normal")")
             return self.menuBarLayoutRenderer.render(
                 layout: MenuBarLayout(lines: [[.icon, .accountLabel, .percent(window: .weekly)]]),
                 data: data,

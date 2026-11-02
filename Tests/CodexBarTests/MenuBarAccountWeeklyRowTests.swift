@@ -6,6 +6,29 @@ import Testing
 @MainActor
 struct MenuBarAccountWeeklyRowTests {
     @Test
+    func `weekly account rows render their account labels and percentages`() {
+        let row = MenuBarAccountWeeklyRow(
+            label: "Account 1",
+            provider: .claude,
+            snapshot: UsageSnapshot(primary: nil, secondary: self.window(used: 10, minutes: 10080), updatedAt: Date()))
+        let rendered = MenuBarLayoutRenderer().render(
+            layout: MenuBarLayout(lines: [[.accountLabel, .percent(window: .weekly)]]),
+            data: row.renderData(provider: .claude, iconKey: "example"),
+            icon: nil,
+            options: MenuBarLayoutRenderOptions(
+                size: .regular,
+                highContrast: false,
+                showUsed: false,
+                conditionals: [],
+                appearanceName: "NSAppearanceNameAqua",
+                isDebugApp: false,
+                now: Date(),
+                forceStackedStyle: true))
+        #expect(rendered.attributedTitle.string.contains(row.label))
+        #expect(rendered.accessibilityLabel.contains("90%"))
+    }
+
+    @Test
     func `weekly allowance follows each account independently`() {
         let initial = MenuBarAccountWeeklyRow.claude(
             accounts: [self.claudeAccount(slot: 1, used: 10), self.claudeAccount(slot: 2, used: 60)],

@@ -11,4 +11,30 @@ struct MenuBarAccountWeeklyRow: Hashable {
         self.weekly = MenuBarLayoutRenderWindow(
             MenuBarLayoutSemanticWindowResolver.windows(provider: provider, snapshot: snapshot).weekly)
     }
+
+    func renderData(provider: UsageProvider, iconKey: String) -> MenuBarLayoutRenderData {
+        MenuBarLayoutRenderData(
+            provider: provider.instanceID,
+            iconKey: iconKey,
+            providerName: ProviderDescriptorRegistry.descriptor(for: provider).metadata.displayName,
+            accountLabel: self.label,
+            laneLabels: MenuBarLayoutLaneLabels(provider: provider, snapshot: nil),
+            primary: nil,
+            secondary: nil,
+            tertiary: nil,
+            session: nil,
+            weekly: self.weekly,
+            scopedWeekly: nil,
+            scopedWeeklyTitle: nil,
+            automatic: nil,
+            automaticText: nil,
+            sessionPace: nil,
+            weeklyPace: nil,
+            automaticPace: nil,
+            runsOut: nil,
+            balance: nil,
+            costToday: nil,
+            cost30d: nil,
+            metrics: .unavailable)
+    }
 }

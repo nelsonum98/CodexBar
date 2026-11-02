@@ -69,7 +69,7 @@ struct MenuBarLayoutRenderData: Hashable {
     let tertiary: MenuBarLayoutRenderWindow?
     var extraRateWindows: [MenuBarLayoutRenderExtra] = []
     let session: MenuBarLayoutRenderWindow?
-    var weekly: MenuBarLayoutRenderWindow?
+    let weekly: MenuBarLayoutRenderWindow?
     let scopedWeekly: MenuBarLayoutRenderWindow?
     /// Title of the active scoped weekly window (e.g. "Fable only"), used to label the
     /// `.scopedWeekly` token with the real model rather than assuming Fable.
