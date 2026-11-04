@@ -131,6 +131,51 @@ class NativeTestRunnerTests(unittest.TestCase):
                 self.assertTrue(captured["existed"])
                 self.assertFalse(Path(captured["home"]).exists())
 
+    def test_native_and_sharded_scratch_is_removed_on_success_and_failure(self):
+        shared = self.directory / "shared-temp"
+        shared.mkdir()
+        self.environment["TMPDIR"] = str(shared)
+        binary = self.directory / "swift"
+        binary.write_text(
+            "#!/usr/bin/env python3\n"
+            "import json, os, socket, sys, tempfile\n"
+            "from pathlib import Path\n"
+            "scratch = Path(tempfile.mkdtemp(prefix='compiler-scratch-'))\n"
+            "(scratch / 'generated.swift').write_text('synthetic generated source')\n"
+            "with socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM) as channel:\n"
+            "    channel.bind(str(scratch / 's'))\n"
+            "with open(os.environ['NATIVE_TEST_CAPTURE'], 'a') as capture:\n"
+            "    capture.write(json.dumps({'home': os.environ['HOME'], 'scratch': str(scratch)}) + '\\n')\n"
+            "listing = sys.argv[1:] == ['test', 'list']\n"
+            "if listing: print('CodexBarTests.FixtureTests/example()')\n"
+            "raise SystemExit(int(os.environ.get('NATIVE_TEST_EXIT', '0')) "
+            "if not listing or os.environ.get('FAIL_DISCOVERY') else 0)\n",
+            encoding="utf-8",
+        )
+        for runner in ["test_fast.sh", "test.sh"]:
+            for code in [0, 23]:
+                for fail_discovery in ([False, True] if runner == "test.sh" and code else [False]):
+                    with self.subTest(runner=runner, code=code, fail_discovery=fail_discovery):
+                        self.capture.unlink(missing_ok=True)
+                        self.environment["NATIVE_TEST_EXIT"] = str(code)
+                        if fail_discovery:
+                            self.environment["FAIL_DISCOVERY"] = "1"
+                        else:
+                            self.environment.pop("FAIL_DISCOVERY", None)
+                        result = self.run_command(["bash", str(ROOT / "Scripts" / runner)])
+                        if code:
+                            self.assertNotEqual(result.returncode, 0, result.stderr)
+                        else:
+                            self.assertEqual(result.returncode, 0, result.stderr)
+                        captures = [json.loads(line) for line in self.capture.read_text().splitlines()]
+                        self.assertEqual(len(captures), 2 if runner == "test.sh" and not fail_discovery else 1)
+                        for captured in captures:
+                            home = Path(captured["home"]).resolve()
+                            scratch = Path(captured["scratch"]).resolve()
+                            self.assertTrue(scratch.is_relative_to(home), captured)
+                            self.assertFalse(home.exists())
+                            self.assertFalse(scratch.exists())
+
     def test_invalid_deadline_fails_before_launch(self):
         for value in ["0", "-1", "invalid"]:
             with self.subTest(value=value):
