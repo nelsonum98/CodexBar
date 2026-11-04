@@ -195,13 +195,19 @@ final class InMemoryTokenAccountStore: ProviderTokenAccountStoring, @unchecked S
     }
 }
 
-private let testConfigStoreProcessRoot = FileManager.default.temporaryDirectory
+let testScratchDirectory: URL = if let path = ProcessInfo.processInfo.environment["TMPDIR"], !path.isEmpty {
+    URL(fileURLWithPath: path, isDirectory: true)
+} else {
+    FileManager.default.temporaryDirectory
+}
+
+private let testStoreProcessRoot = testScratchDirectory
     .appendingPathComponent("codexbar-tests", isDirectory: true)
     .appendingPathComponent(UUID().uuidString, isDirectory: true)
 
 func testConfigStore(suiteName: String, reset: Bool = true) -> CodexBarConfigStore {
     let sanitized = suiteName.replacingOccurrences(of: "/", with: "-")
-    let base = testConfigStoreProcessRoot
+    let base = testStoreProcessRoot
         .appendingPathComponent(sanitized, isDirectory: true)
     let url = base.appendingPathComponent("config.json")
     if reset {
@@ -332,8 +338,7 @@ func withStatusItemControllerForTesting<T>(
 
 func testPlanUtilizationHistoryStore(suiteName: String, reset: Bool = true) -> PlanUtilizationHistoryStore {
     let sanitized = suiteName.replacingOccurrences(of: "/", with: "-")
-    let base = FileManager.default.temporaryDirectory
-        .appendingPathComponent("codexbar-tests", isDirectory: true)
+    let base = testStoreProcessRoot
         .appendingPathComponent(sanitized, isDirectory: true)
     let url = base.appendingPathComponent("history", isDirectory: true)
     if reset {

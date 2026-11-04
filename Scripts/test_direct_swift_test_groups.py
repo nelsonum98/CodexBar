@@ -5,6 +5,7 @@ import errno
 import os
 from pathlib import Path
 import shutil
+import socket
 import subprocess
 import tempfile
 import threading
@@ -185,6 +186,32 @@ class DirectSwiftTestGroupsTests(unittest.TestCase):
         self.assertEqual([call[3] for call in calls], ["0", "1"])
         self.assertEqual(calls[0][2], calls[1][2])
         self.assertFalse(Path(calls[0][2]).exists())
+
+    def test_worker_removes_scratch_after_success_failure_and_timeout(self):
+        group = [{"name": "ExampleTests", "suite_name": "ExampleTests", "filter_pattern": r"^ExampleTests/"}]
+        runtime = {"developer": "/synthetic/Developer", "xctest": "synthetic-xctest",
+                   "testing_helper": "synthetic-testing", "products": [{"bundle": "synthetic-bundle",
+                   "binary": "synthetic-binary", "xctest": ["ExampleTests/testOne"], "swift": []}]}
+        with tempfile.TemporaryDirectory() as inherited:
+            for code in [0, 23, 124]:
+                scratch = None
+                home = None
+
+                def execute(command, timeout):
+                    nonlocal scratch, home
+                    home = Path(os.environ["HOME"])
+                    scratch = Path(tempfile.mkdtemp(dir=os.environ["TMPDIR"]))
+                    (scratch / "fixture").write_text("synthetic fixture")
+                    with socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM) as channel:
+                        channel.bind(str(scratch / "s"))
+                    return code
+
+                with self.subTest(code=code), patch.dict(os.environ, {"TMPDIR": inherited}), \
+                        patch("direct_swift_test_groups.run_command", side_effect=execute):
+                    self.assertEqual(run_worker({"runtime": runtime, "groups": [group], "timeout": 10}, 0), code)
+                    self.assertTrue(scratch.resolve().is_relative_to(home.resolve()))
+                    self.assertFalse(scratch.exists())
+                    self.assertFalse(home.exists())
 
     def test_worker_preserves_failure_after_running_other_frameworks(self):
         group = [{"name": "ExampleTests", "suite_name": "ExampleTests", "filter_pattern": r"^ExampleTests/"}]

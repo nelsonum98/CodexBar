@@ -198,8 +198,14 @@ Use synthetic dictionaries or set synthetic sentinels inside fixtures; never dep
 For direct `swift test`, source the script in a Bash subshell first. This does not authorize live account tests.
 
 `make test`, `make test-fast`, and `make test-skip-build` also give test discovery and execution a temporary
-`HOME` and `CFFIXED_USER_HOME`, removed when the invocation ends. This keeps incidental default cost-store
-access out of the developer's cache. Direct `swift test` callers must provide their own isolated home.
+`HOME`, `CFFIXED_USER_HOME`, and `TMPDIR`, removed when the invocation ends after contained descendants drain.
+Scratch from tools that honor `TMPDIR` and the shared config/history fixtures stays in that directory alongside
+incidental default cost-store data. On macOS, Foundation can ignore `TMPDIR` for `FileManager.temporaryDirectory`.
+Shared fixtures use `testScratchDirectory` to honor the runner scope explicitly. Other fixtures must remove their
+own scratch. SwiftPM can still emit macro expansion sources into the shared macOS temporary directory despite
+these settings, so runner cleanup does not cover those compiler files.
+Runner directories use `/tmp` to keep Unix socket fixture paths within the macOS path-length limit.
+Direct `swift test` callers must provide their own isolated home and temporary directory.
 
 `@ProcessEnvironment` provides count-only descriptions and reflection for stored process-environment dictionaries
 throughout the app, CLI, provider contexts, and session scanners. Use it on every stored environment, including
@@ -731,8 +737,9 @@ seconds for fresh helper crash reports in the original and temporary homes. The 
 fresh test crash reports again after failures in the required full test job. Credential
 values and local home identities are redacted; unrelated process reports are excluded.
 
-Each group has a fresh process and temporary `HOME` and `CFFIXED_USER_HOME`, with the existing credential
-and session-file isolation, Keychain suppression, timeout, retry, and descendant cleanup.
+Each group has a fresh process and temporary `HOME`, `CFFIXED_USER_HOME`, and `TMPDIR`, with the existing credential
+and session-file isolation, Keychain suppression, timeout, retry, and descendant cleanup. Group scratch is removed
+on success, failure, or a handled timeout. An uncatchable runner termination can still leave its temporary directory.
 Async process fixtures should use `ProcessExitRelease.afterExit` after signaling a Foundation child,
 instead of blocking a cooperative executor in `waitUntilExit()`. PTY setup tests should keep the child
 alive until its output is observed; Darwin can discard unread output when the last slave descriptor closes.

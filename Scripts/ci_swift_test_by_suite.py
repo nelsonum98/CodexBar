@@ -598,9 +598,9 @@ def cleanup_discovery_home(home: str) -> None:
 def swift_test_list(swift_command: list[str], inventory: list[str] | None = None) -> list[TestSelection]:
     command = [*swift_command, "test", "list"]
     # Listing loads test products, so it gets a private home like test execution.
-    home = tempfile.mkdtemp(prefix="codexbar-test-discovery-")
+    home = tempfile.mkdtemp(prefix="codexbar-test-discovery-", dir="/tmp")
     try:
-        environment = os.environ | {"HOME": home, "CFFIXED_USER_HOME": home}
+        environment = os.environ | {"HOME": home, "CFFIXED_USER_HOME": home, "TMPDIR": home}
         result = subprocess.run(command, capture_output=True, text=True, env=environment)
         if result.returncode != 0 and is_missing_sparkle_runtime_failure(result):
             if repair_sparkle_test_runtime(swift_command, environment=environment):
@@ -728,12 +728,11 @@ def filter_for(suites: list[TestSelection]) -> str:
 
 
 def run_group(suites: list[TestSelection], timeout: int, swift_command: list[str]) -> int:
-    # Like direct workers, each group gets a temporary HOME and CFFIXED_USER_HOME instead of the caller's.
-    with tempfile.TemporaryDirectory(prefix="codexbar-test-group-") as home:
+    with tempfile.TemporaryDirectory(prefix="codexbar-test-group-", dir="/tmp") as home:
         return run_command(
             [*swift_command, "test", "--skip-build", "--no-parallel", "--filter", filter_for(suites)],
             timeout=timeout,
-            environment=os.environ | {"HOME": home, "CFFIXED_USER_HOME": home},
+            environment=os.environ | {"HOME": home, "CFFIXED_USER_HOME": home, "TMPDIR": home},
         )
 
 
@@ -823,7 +822,7 @@ def main() -> int:
 
         if args.direct_workers is not None:
             from direct_swift_test_groups import InventoryMismatch, pool_timeout, prepare_runtime
-            with tempfile.TemporaryDirectory(prefix="codexbar-direct-run-") as directory:
+            with tempfile.TemporaryDirectory(prefix="codexbar-direct-run-", dir="/tmp") as directory:
                 root = Path(directory)
                 groups = [[asdict(selection) for selection in group] for group in suite_groups]
                 try:

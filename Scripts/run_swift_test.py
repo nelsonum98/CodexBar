@@ -21,11 +21,9 @@ def main() -> int:
     if error is not None:
         print(error, file=sys.stderr)
         return 2
-    # Like serial groups, the whole invocation, including its build, gets temporary HOME and
-    # CFFIXED_USER_HOME values instead of the caller's.
-    with tempfile.TemporaryDirectory(prefix="codexbar-native-test-home-") as home:
+    with tempfile.TemporaryDirectory(prefix="codexbar-native-test-home-", dir="/tmp") as home:
         return run_command(["swift", "test", "--no-parallel", *sys.argv[1:]], timeout=timeout,
-                           environment=os.environ | {"HOME": home, "CFFIXED_USER_HOME": home})
+                           environment=os.environ | {"HOME": home, "CFFIXED_USER_HOME": home, "TMPDIR": home})
 
 
 if __name__ == "__main__":
