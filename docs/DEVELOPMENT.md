@@ -199,7 +199,9 @@ For direct `swift test`, source the script in a Bash subshell first. This does n
 
 `make test`, `make test-fast`, and `make test-skip-build` also give test discovery and execution a temporary
 `HOME`, `CFFIXED_USER_HOME`, and `TMPDIR`, removed when the invocation ends after contained descendants drain.
-Compiler-generated source and test scratch stay in that directory alongside incidental default cost-store data.
+Compiler-generated source and the shared config/history fixtures stay in that directory alongside incidental default
+cost-store data. On macOS, Foundation can ignore `TMPDIR` for `FileManager.temporaryDirectory`. Shared fixtures
+use `testScratchDirectory` to honor the runner scope explicitly. Other fixtures must remove their own scratch.
 Runner directories use `/tmp` to keep Unix socket fixture paths within the macOS path-length limit.
 Direct `swift test` callers must provide their own isolated home and temporary directory.
 

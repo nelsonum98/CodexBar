@@ -23,7 +23,8 @@ extension StatusMenuTests {
             environment[CodexCredentialFileAccess.isolationEnvironmentKey] == "1" &&
             environment["CODEXBAR_TEST_SESSION_FILE_ISOLATION"] == "1" &&
             environment["CODEXBAR_ALLOW_TEST_KEYCHAIN_ACCESS"] != "1"
-        let homeBelowTmp = self.isStrictDescendant(home, of: temporaryDirectory)
+        let homeBelowTmp = self.isStrictDescendant(home, of: temporaryDirectory) ||
+            self.isStrictDescendant(home, of: URL(fileURLWithPath: "/tmp", isDirectory: true))
         let outputBelowHome = self.isStrictDescendant(outputDirectory, of: home)
         let noDelegate = NSApplication.shared.delegate == nil
         guard testProcess, flags, homeBelowTmp, outputBelowHome, noDelegate
