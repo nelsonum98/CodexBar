@@ -2794,3 +2794,5 @@
 "Leave blank to use the default name." = "Залиште поле порожнім, щоб використовувати назву за замовчуванням.";
 "Rewards" = "Винагороди";
 "Reward expiry" = "Термін дії винагород";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";

@@ -2797,3 +2797,5 @@
 "Leave blank to use the default name." = "Lascia vuoto per usare il nome predefinito.";
 "Rewards" = "Premi";
 "Reward expiry" = "Scadenza dei premi";
+"Weekly allowance per account" = "Quota settimanale per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Mostra due righe con il nome dell’account per Claude e Codex e la percentuale settimanale rimanente.";

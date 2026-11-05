@@ -2795,3 +2795,5 @@
 "Leave blank to use the default name." = "Deixa-ho en blanc per fer servir el nom per defecte.";
 "Rewards" = "Recompenses";
 "Reward expiry" = "Caducitat de les recompenses";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";

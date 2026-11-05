@@ -1422,6 +1422,8 @@
 
 /* Menu bar layout editor */
 "menu_bar_layout_title" = "Layout";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";
 "menu_bar_layout_footer" = "Drag tokens to arrange the menu bar. Click a token to append it; select a placed token and press Delete to remove it.";
 "menu_bar_layout_footer_requires_icon_and_percent" = "Layout applies only to the “%@” menu bar style. Choose that style above to edit it.";
 "menu_bar_layout_group_identity" = "Identity";

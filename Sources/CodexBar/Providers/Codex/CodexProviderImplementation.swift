@@ -7,6 +7,14 @@ struct CodexProviderImplementation: ProviderImplementation {
     let supportsLoginFlow: Bool = true
 
     @MainActor
+    func menuBarAccountWeeklyRows(store: UsageStore, settings: SettingsStore) -> [MenuBarAccountWeeklyRow] {
+        MenuBarAccountWeeklyRow.codex(
+            accounts: settings.codexVisibleAccountProjectionForMenuDisplay?.visibleAccounts ?? [],
+            snapshots: store.codexAccountSnapshots,
+            hidePersonalInfo: settings.hidePersonalInfo)
+    }
+
+    @MainActor
     func presentation(context _: ProviderPresentationContext) -> ProviderPresentation {
         ProviderPresentation { context in
             context.store.version(for: context.provider) ?? "not detected"

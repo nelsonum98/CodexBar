@@ -14,6 +14,9 @@ protocol ProviderImplementation: Sendable {
     func presentation(context: ProviderPresentationContext) -> ProviderPresentation
 
     @MainActor
+    func menuBarAccountWeeklyRows(store: UsageStore, settings: SettingsStore) -> [MenuBarAccountWeeklyRow]
+
+    @MainActor
     func observeSettings(_ settings: SettingsStore)
 
     @MainActor
@@ -119,6 +122,11 @@ extension ProviderImplementation {
     @MainActor
     func presentation(context _: ProviderPresentationContext) -> ProviderPresentation {
         ProviderPresentation(detailLine: ProviderPresentation.standardDetailLine)
+    }
+
+    @MainActor
+    func menuBarAccountWeeklyRows(store _: UsageStore, settings _: SettingsStore) -> [MenuBarAccountWeeklyRow] {
+        []
     }
 
     @MainActor

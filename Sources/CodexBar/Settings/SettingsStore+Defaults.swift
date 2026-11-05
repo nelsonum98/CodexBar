@@ -506,6 +506,11 @@ extension SettingsStore {
         set { self.setDefault(\.menuBarLayoutShowWindowLabels, newValue, key: "menuBarLayoutShowWindowLabels") }
     }
 
+    var menuBarAccountWeeklyUsageEnabled: Bool {
+        get { self.defaultsState.menuBarAccountWeeklyUsageEnabled }
+        set { self.setDefault(\.menuBarAccountWeeklyUsageEnabled, newValue, key: "menuBarAccountWeeklyUsageEnabled") }
+    }
+
     var menuBarLayoutSize: MenuBarLayoutSize {
         get { MenuBarLayoutSize(rawValue: self.defaultsState.menuBarLayoutSizeRaw) ?? .regular }
         set { self.setDefault(\.menuBarLayoutSizeRaw, newValue.rawValue, key: "menuBarLayoutSize") }

@@ -2790,3 +2790,5 @@
 "Leave blank to use the default name." = "Laat dit veld leeg om de standaardnaam te gebruiken.";
 "Rewards" = "Beloningen";
 "Reward expiry" = "Vervaldatum beloningen";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";

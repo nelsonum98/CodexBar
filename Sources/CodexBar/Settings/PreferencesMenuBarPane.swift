@@ -75,6 +75,14 @@ struct MenuBarPane: View {
             }
 
             Section {
+                Toggle(isOn: self.$settings.menuBarAccountWeeklyUsageEnabled) {
+                    SettingsRowLabel(
+                        L("Weekly allowance per account"),
+                        subtitle: L(
+                            "Show two labeled account rows for Claude and Codex, with the weekly percentage left."))
+                }
+                .disabled(self.settings.mergeIcons || !Self.layoutEditorEnabled(for: self.settings.menuBarIconStyle))
+
                 MenuBarLayoutEditor(settings: self.settings, store: self.store)
                     .disabled(!Self.layoutEditorEnabled(for: self.settings.menuBarIconStyle))
             } header: {
