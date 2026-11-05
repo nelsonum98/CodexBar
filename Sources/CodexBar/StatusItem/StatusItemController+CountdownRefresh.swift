@@ -18,6 +18,13 @@ extension StatusItemController {
         var countdownResetDates: [Date] = []
         var absoluteResetDates: [Date] = []
         for provider in providers {
+            if self.settings.menuBarShowsBrandIconWithPercent,
+               self.settings.menuBarIconStyle == .iconAndPercent,
+               let builtIn = provider.firstPartyProvider,
+               self.menuBarAccountWeeklyRows(for: builtIn).count == 2
+            {
+                delays.append(60 - now.timeIntervalSince1970.truncatingRemainder(dividingBy: 60))
+            }
             let resolution = self.renderedMenuBarLayoutResolution(forInstanceID: provider)
             if !resolution.usesLegacyRendering,
                self.settings.menuBarIconStyle == .iconAndPercent

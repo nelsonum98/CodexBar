@@ -6,6 +6,14 @@ struct ClaudeProviderImplementation: ProviderImplementation {
     let supportsLoginFlow: Bool = true
 
     @MainActor
+    func menuBarAccountWeeklyRows(store: UsageStore, settings: SettingsStore) -> [MenuBarAccountWeeklyRow] {
+        MenuBarAccountWeeklyRow.claude(
+            accounts: store.claudeSwapAccountSnapshots,
+            adapterError: store.claudeSwapLastError,
+            hidePersonalInfo: settings.hidePersonalInfo)
+    }
+
+    @MainActor
     func presentation(context _: ProviderPresentationContext) -> ProviderPresentation {
         ProviderPresentation { context in
             var versionText = context.store.version(for: context.provider) ?? "not detected"

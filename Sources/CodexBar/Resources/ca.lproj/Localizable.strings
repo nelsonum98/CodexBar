@@ -2821,3 +2821,5 @@
 "Tripo is rate limiting requests. Try again later." = "Tripo limita la freqüència de les sol·licituds. Torna-ho a provar més tard.";
 "Tripo request failed. Try refreshing later." = "La sol·licitud a Tripo ha fallat. Torna a actualitzar més tard.";
 "Tripo returned an unrecognized response. Update CodexBar and try again." = "Tripo ha retornat una resposta desconeguda. Actualitza CodexBar i torna-ho a provar.";
+"Weekly allowance per account" = "Weekly allowance per account";
+"Show two labeled account rows for Claude and Codex, with the weekly percentage left." = "Show two labeled account rows for Claude and Codex, with the weekly percentage left.";

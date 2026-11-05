@@ -93,6 +93,7 @@ extension StatusItemController {
             "refreshing=\(self.isRefreshingLocalMenuBarUsage(provider) ? "1" : "0")",
             "text=\(displayText ?? "nil")",
             "estimated=\(snapshot?.dataConfidence == .estimated)",
+            "accountWeekly=\(self.menuBarAccountWeeklyRows(for: provider).hashValue)",
             layoutSignature,
         ].joined(separator: "|")
     }
